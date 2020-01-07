@@ -7,9 +7,9 @@
  * 设置响应报文首部的状态行
  * @param header: 首部  status: 状态码
  */
-void set_response_header_status(char *header, int status);
+void set_response_header_status(int client_fd, char *header, int status);
 
-void set_response_header_status(char *header, int status) {
+void set_response_header_status(int client_fd, char *header, int status) {
     // 只列举常用状态码，默认为200
     switch (status) {
         case 204:
@@ -34,14 +34,16 @@ void set_response_header_status(char *header, int status) {
             sprintf(header, "HTTP/1.0 %d %s\r\n", 200, "OK");
             break;
     }
+    write(client_fd, header, strlen(header));
 }
 
 /*
  * 设置响应报文的Content-type
  * @parma header: 首部  value: content-type的值
  */
-void set_response_header_content_type(char *header, char *value);
+void set_response_header_content_type(int client_fd, char *header, char *value);
 
-void set_response_header_content_type(char *header, char *value) {
-    sprintf(header, "%sContent-type: %s\r\n", header, value);
+void set_response_header_content_type(int client_fd, char *header, char *value) {
+    sprintf(header, "%sContent-type: %s\r\n\r\n", header, value);
+    write(client_fd, header, strlen(header));
 }
