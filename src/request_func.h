@@ -13,3 +13,31 @@ void parse_request_header_row(char *request, char *method, char *path) {
     char version[1024];
     sscanf(request, "%s %s %s", method, path, version);
 }
+
+/*
+ * 判断是否为get请求
+ * @param  method: 方法
+ */
+int is_get_request(char *method);
+
+int is_get_request(char *method) {
+    if (strcmp(method, "GET") == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+/*
+ * 判读是否为post请求
+ * @param  method: 方法
+ */
+int is_post_request(char *method);
+
+int is_post_request(char *method) {
+    if (strcmp(method, "POST") == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
