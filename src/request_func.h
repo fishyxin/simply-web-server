@@ -41,3 +41,38 @@ int is_post_request(char *method) {
         return 0;
     }
 }
+
+/*
+ * 判断路径是否等于指定路径
+ * @param path1  path2
+ */
+int path_equal(char *path1, char *path2);
+
+int path_equal(char *path1, char *path2) {
+    if (strcmp(path1, path2) == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+/*
+ * 解析uri中的文件路径和查询字符串
+ */
+void parse_path_and_querystring(char *uri, char *path, char *querystring);
+void parse_path_and_querystring(char *uri, char *path, char *querystring) {
+    char *result = NULL;
+    result = strtok(uri, "?");
+    if (result != NULL) {
+        strcpy(path, result);
+    } else {
+        strcpy(path, "/");
+    }
+
+    result = strtok(NULL, "?");
+    if (result != NULL) {
+        strcpy(querystring, result);
+    } else {
+        strcpy(querystring, "");
+    }
+}
