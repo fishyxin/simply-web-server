@@ -75,3 +75,64 @@ void set_response_body_static_file(int client_fd, char *filename) {
     // 清空空间
     munmap(srcp, sbuf.st_size);
 }
+
+/* 
+ * 执行cgi程序
+ *
+ */
+void excute_cgi(int client_fd, char *data);
+
+void excute_cgi(int client_fd, char *data) {
+    int cgi_output[2];
+    int cgi_input[2];
+    pid_t pid;
+    int status;
+    char header[1024];
+
+    if (pipe(cgi_output) < 0 || pipe(cgi_output) < 0 || (pid = fork()) < 0) {
+        // 返回服务器器内部错误
+        set_response_header_status(client_fd, header, 500);
+        set_response_header_content_type(client_fd, header, "text/html");
+        set_response_body_static_file(client_fd, "./error/500.html");
+        return ;
+    }
+
+    if (pid == 0) { // 子进程(执行cgi程序，将结果写回管道)
+        char env_content[BUF_MAXSIZE];
+
+        // 重定向管道输入输出
+        dup2(cgi_output[1], 1);
+        dup2(cgi_input[0], 0);
+        close(cgi_output[0]);
+        close(cgi_input[1]);
+
+        // 将数据写入环境变量
+        sprintf(env_content, "DATA=%s", data);
+        putenv(env_content);
+
+        // 执行cgi文件
+        execl("./cgi", "./cgi", NULL);
+        // 退出子进程
+        exit(0);
+    } else {    // 父进程
+        close(cgi_output[1]);
+        close(cgi_input[0]);
+
+        set_response_header_status(client_fd, header, 200);
+        set_response_header_content_type(client_fd, header, "text/html");
+
+        char buf[BUF_MAXSIZE];
+        int n;
+        
+        // 将管道的输出写入到响应
+        while ((n = read(cgi_output[0], &buf, BUF_MAXSIZE)) > 0) {
+            write(client_fd, buf, n);
+        }
+
+        close(cgi_output[0]);
+        close(cgi_input[1]);
+        waitpid(pid, &status, 0);
+        close(client_fd);
+    }
+
+}

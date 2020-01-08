@@ -16,7 +16,6 @@ static void math_data(char* data)
 	//METHOD=...&...&...&...
 	while(*start)
 	{
-	perror("math_data !");
 		if(*start == '=')
 		{
 			arr[i] = start+1;
@@ -36,7 +35,6 @@ static void math_data(char* data)
 	int num1 = atoi(arr[0]);
 	int num2 = atoi(arr[1]);
 
-	perror("data1 and data2!");
 	printf("<html>\n");
 	printf("<body>\n");
 	printf("<h1>data1 + data2 = %d</h1>\n",num1 + num2);

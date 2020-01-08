@@ -41,6 +41,22 @@ void handle_request(int client_fd) {
         close(client_fd);
         return ;
     }
+
+    // 请求路径为cgi
+    if (path_equal(request_path, "/cgi")) {
+        if (is_get_request(method)) {
+            // 执行cgi
+            excute_cgi(client_fd, querystring);
+        } else {
+            char request_body[BUF_MAXSIZE];
+            // 读取请求体
+            parse_request_body(request, request_body);
+            // 执行cgi
+            excute_cgi(client_fd, request_body);
+        }
+        return ;
+    }
+
     // 文件路径(request_path加上目录)
     char file_path[BUF_MAXSIZE];
     sprintf(file_path, "%s%s", SERVER_DIR, request_path);
