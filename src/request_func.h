@@ -10,7 +10,7 @@
 void parse_request_header_row(char *request, char *method, char *path);
 
 void parse_request_header_row(char *request, char *method, char *path) {
-    char version[1024];
+    char version[BUF_MAXSIZE];
     sscanf(request, "%s %s %s", method, path, version);
 }
 

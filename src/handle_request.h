@@ -8,9 +8,9 @@
 void handle_request(int client_fd);
 
 void handle_request(int client_fd) {
-    char request[2048];
-    char method[2048], uri[2048];
-    char response_header[2048];
+    char request[BUF_MAXSIZE];
+    char method[BUF_MAXSIZE], uri[BUF_MAXSIZE];
+    char response_header[BUF_MAXSIZE];
 
     // 读取请求报文
     read(client_fd, request, sizeof(request));
@@ -30,7 +30,7 @@ void handle_request(int client_fd) {
     }
 
     // 解析资源路径和查询字符串
-    char request_path[2048], querystring[2048];
+    char request_path[BUF_MAXSIZE], querystring[BUF_MAXSIZE];
     parse_path_and_querystring(uri, request_path, querystring);
 
     // 访问根路径，直接返回主页
@@ -41,9 +41,8 @@ void handle_request(int client_fd) {
         close(client_fd);
         return ;
     }
-
     // 文件路径(request_path加上目录)
-    char file_path[2048];
+    char file_path[BUF_MAXSIZE];
     sprintf(file_path, "%s%s", SERVER_DIR, request_path);
 
     // 获文件状态
