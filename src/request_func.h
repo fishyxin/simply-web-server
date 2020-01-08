@@ -76,3 +76,18 @@ void parse_path_and_querystring(char *uri, char *path, char *querystring) {
         strcpy(querystring, "");
     }
 }
+
+/*
+ * 取出post请求请求体
+ */
+void parse_request_body(char *request, char *request_body);
+
+void parse_request_body(char *request, char *request_body) {
+    char *result = NULL;
+    result = strtok(request, "\r\n");
+
+    while( result != NULL) {
+        strcpy(request_body, result);
+        result = strtok(NULL, "\r\n");
+    }
+}
